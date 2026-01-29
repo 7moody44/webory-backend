@@ -8,17 +8,19 @@ const UserSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-// Middleware to hash password before saving
-UserSchema.pre('save', async function (next) {
+// User.js
+// Remove 'next' from the function arguments
+UserSchema.pre('save', async function () {
+    // If password hasn't changed, stop here
+    if (!this.isModified('password')) return;
+
     try {
-        if (!this.isModified('password')) {
-            return next();
-        }
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
-        next();
+        // No next() needed here!
     } catch (err) {
-        next(err);
+        // If you want to throw an error, just throw it
+        throw err;
     }
 });
 
