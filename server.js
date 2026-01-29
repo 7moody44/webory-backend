@@ -14,8 +14,11 @@ const app = express();
 app.use(cors({
     origin: '*', // Allows all websites to talk to your backend
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: '*' // Explicitly allow all headers
 }));
+
+// Enable pre-flight for all routes
+app.options('*', cors());
 
 app.use(express.json()); // Allows the server to read JSON data sent by the user
 
