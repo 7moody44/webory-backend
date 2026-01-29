@@ -10,9 +10,18 @@ const cors = require('cors');
 const app = express();
 
 // 4. Middleware (Settings for the server)
-app.use(cors()); // Allows your website to access this API
+// Explicit CORS config to prevent "CORS Failed" on pre-flight OPTIONS requests
+app.use(cors({
+    origin: '*', // Allows all websites to talk to your backend
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json()); // Allows the server to read JSON data sent by the user
+
+// Routes
 app.use('/api/auth', require('./routes/auth'));
+
 // 5. THE CONNECTION (The most important part)
 const dbURI = process.env.MONGO_URI;
 
@@ -29,9 +38,11 @@ mongoose.connect(dbURI)
         console.log("-----------------------------------------");
     });
 
-// 6. Start the server on Port 5000
+// 6. Start the server
+// Use Render's dynamic PORT or default to 5000 for local dev
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+// Binding to '0.0.0.0' is required for Render to map the external URL to your app
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server is awake and running on port ${PORT}`);
 });
