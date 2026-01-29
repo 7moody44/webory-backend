@@ -11,18 +11,19 @@ const app = express();
 
 // 4. Middleware (Settings for the server)
 // Explicit CORS config to prevent "CORS Failed" on pre-flight OPTIONS requests
+// --- 4. Middleware ---
+// Keep this part - it handles everything including OPTIONS
 app.use(cors({
-    origin: '*', // Allows all websites to talk to your backend
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: '*' // Explicitly allow all headers
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Enable pre-flight for all routes
-app.options('*', cors());
+app.use(express.json());
 
-app.use(express.json()); // Allows the server to read JSON data sent by the user
+// DELETE OR COMMENT OUT THIS LINE BELOW - IT IS CAUSING THE CRASH
+// app.options('*', cors()); 
 
-// Routes
 app.use('/api/auth', require('./routes/auth'));
 
 // 5. THE CONNECTION (The most important part)
